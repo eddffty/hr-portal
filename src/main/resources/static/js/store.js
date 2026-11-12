@@ -1,0 +1,1 @@
+export const store={profile:null,rating:[],data:null,approvals:[],page:'schedule',building:1,week:null,filter:'all',completed:false,unread:false,selected:new Set(),comment:'',busy:false,generation:0};
