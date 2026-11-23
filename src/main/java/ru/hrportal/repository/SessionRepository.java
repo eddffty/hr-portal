@@ -12,4 +12,6 @@ public interface SessionRepository {
   void delete(String id);
 
   void deleteExpired(Instant now);
+
+  void deleteForLogin(String login);
 }
