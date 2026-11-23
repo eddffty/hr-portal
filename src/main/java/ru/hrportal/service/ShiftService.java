@@ -17,6 +17,12 @@ public class ShiftService {
   private final RequestRepository requests;
   private final TimeEntryRepository entries;
   private final WorkflowLock lock;
+  private AvailabilityService availability;
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setAvailability(AvailabilityService availability) {
+    this.availability = availability;
+  }
 
   public ShiftService(
       ShiftRepository shifts,
@@ -63,6 +69,15 @@ public class ShiftService {
   }
 
   public void available(String user, Shift target, Set<Long> excluding) {
+    if (availability != null)
+      check(
+          availability.list(user).stream()
+              .noneMatch(
+                  r ->
+                      r.parity() == AvailabilityService.parity(target.date())
+                          && r.weekday() == target.date().getDayOfWeek().getValue()
+                          && r.slot() == target.slot()),
+          "Сотрудник занят по личному расписанию");
     check(
         all().stream()
             .noneMatch(

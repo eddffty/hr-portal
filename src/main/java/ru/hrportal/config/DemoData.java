@@ -1,17 +1,20 @@
 package ru.hrportal.config;
 
-import jakarta.annotation.PostConstruct;
-
 import java.time.*;
 import java.util.*;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import ru.hrportal.model.*;
 import ru.hrportal.repository.*;
 import ru.hrportal.service.*;
 
 @Component
-public class DemoData {
+@ConditionalOnProperty(name = "portal.demo-data", havingValue = "true", matchIfMissing = true)
+public class DemoData implements ApplicationRunner {
+    private final DatabaseWorkflow workflow;
     private final UserRepository users;
     private final ShiftRepository shifts;
     private final OfferRepository offers;
@@ -23,7 +26,9 @@ public class DemoData {
             ShiftRepository shifts,
             OfferRepository offers,
             PasswordHasher passwords,
-            NotificationService notifications) {
+            NotificationService notifications,
+            DatabaseWorkflow workflow) {
+        this.workflow = workflow;
         this.users = users;
         this.shifts = shifts;
         this.offers = offers;
@@ -36,7 +41,15 @@ public class DemoData {
         users.save(new UserAccount(p, salt, passwords.hash(password, salt)));
     }
 
-    @PostConstruct
+    @Override
+    public void run(ApplicationArguments args) {
+        workflow.execute(
+                () -> {
+                    if (users.findAll().isEmpty()) initialize();
+                    return null;
+                });
+    }
+
     public void initialize() {
         add(
                 new UserProfile(

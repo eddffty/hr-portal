@@ -68,12 +68,12 @@ public class SessionService {
         repository.delete(tokenSession.id());
         throw new DomainException(HttpStatus.UNAUTHORIZED, "Сессия завершена. Войдите снова");
       }
-      return accounts.profile(tokenSession.login());
+      return accounts.activeProfile(tokenSession.login());
     }
     HttpSession session = request.getSession(false);
     if (session == null || session.getAttribute("user") == null)
       throw new DomainException(HttpStatus.UNAUTHORIZED, "Войдите в систему");
-    return accounts.profile((String) session.getAttribute("user"));
+    return accounts.activeProfile((String) session.getAttribute("user"));
   }
 
   public String login(HttpServletRequest request) {
@@ -85,5 +85,12 @@ public class SessionService {
     if (p.role() != role)
       throw new DomainException(HttpStatus.FORBIDDEN, "Недостаточно прав для этого действия");
     return p.login();
+  }
+
+  public String requirePlanner(HttpServletRequest request) {
+    UserProfile profile = current(request);
+    if (profile.role() == Role.EMPLOYEE)
+      throw new DomainException(HttpStatus.FORBIDDEN, "Недостаточно прав");
+    return profile.login();
   }
 }

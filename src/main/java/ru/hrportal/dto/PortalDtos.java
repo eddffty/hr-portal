@@ -15,7 +15,10 @@ public final class PortalDtos {
             @NotBlank @Size(max = 100) String login, @NotBlank @Size(max = 100) String password) {
     }
 
-    public record Decision(@NotNull Boolean accept) {
+    public record Decision(@NotNull Boolean accept, @Size(max = 500) String reason) {
+        public Decision(Boolean accept) {
+            this(accept, null);
+        }
     }
 
     public record Proposal(

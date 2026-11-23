@@ -1,1 +1,26 @@
-export const store={profile:null,rating:[],data:null,approvals:[],page:'schedule',building:1,week:null,filter:'all',completed:false,unread:false,selected:new Set(),comment:'',busy:false,generation:0};
+export const store = {
+    profile: null,
+    collapsed: true,
+    availability: [],
+    avParity: 0,
+    avSelected: new Set(),
+    avUser: null,
+    staff: [],
+    planning: false,
+    plan: {},
+    requestType: "TRANSFER",
+    requestStatus: "pending",
+    rating: [],
+    data: null,
+    approvals: [],
+    page: 'schedule',
+    building: 1,
+    week: null,
+    filter: 'all',
+    completed: false,
+    unread: false,
+    selected: new Set(),
+    comment: '',
+    busy: false,
+    generation: 0
+};

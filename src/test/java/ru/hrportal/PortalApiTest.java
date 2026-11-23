@@ -16,6 +16,19 @@ class PortalApiTest {
   @Autowired MockMvc mvc;
 
   @Test
+  void restResourcesRequireAuthenticationAndFilterOwnShifts() throws Exception {
+    mvc.perform(get("/api/shifts")).andExpect(status().isUnauthorized());
+    var employee = login("glukhov", "Pavel2026!");
+    mvc.perform(get("/api/shifts?building=1&mine=true").session(employee))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].owner").value("glukhov"))
+        .andExpect(jsonPath("$[0].building").value(1));
+    mvc.perform(get("/api/notifications").session(employee)).andExpect(status().isOk());
+    mvc.perform(get("/api/requests").session(employee)).andExpect(status().isOk());
+    mvc.perform(get("/api/manager/requests").session(employee)).andExpect(status().isForbidden());
+  }
+
+  @Test
   void scheduleIsIdenticalForEmployeeManagerAndScheduler() throws Exception {
     var json = new com.fasterxml.jackson.databind.ObjectMapper();
     var employee = login("glukhov", "Pavel2026!");

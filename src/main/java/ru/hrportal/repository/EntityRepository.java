@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EntityRepository<T> {
-    Optional<T> find(long id);
+  Optional<T> find(long id);
 
-    List<T> findAll();
+  List<T> findAll();
 
-    T save(T value);
+  T save(T value);
 
-    long nextId();
+  long nextId();
 }

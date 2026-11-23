@@ -32,6 +32,6 @@ public class ApprovalController {
     @PostMapping("/requests/{id}")
     public void review(
             @PathVariable long id, @Valid @RequestBody Decision input, HttpServletRequest request) {
-        exchange.review(sessions.require(request, Role.MANAGER), id, input.accept());
+        exchange.review(sessions.require(request, Role.MANAGER), id, input.accept(), input.reason());
     }
 }
